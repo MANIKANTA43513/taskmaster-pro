@@ -1,224 +1,164 @@
-# Task Glitch - ROI-Based Task Management App
+✅ Task Glitch Challenge — ROI Task Manager (Bug Fix Assignment)
+A modern Task Management Web App built for Sales Teams to track, manage, and prioritize tasks based on ROI (Return on Investment).
+This project is part of an SDE Bug Fix Assignment where the goal is to convert a “glitchy” application into a stable, production-ready product by fixing UI bugs, logical errors, and performance issues.
+🚀 Live Demo
+✅ Live App URL: https://yourname-taskglitch.vercel.app
+✅ GitHub Repo URL: https://github.com/your-username/task-glitch
+✅ Screen Recording: https://drive.google.com/...
+⚠️ Make sure the live link works in Incognito Mode before submitting.
+🎯 Project Objective
+This app was intentionally designed with hidden bugs.
+My responsibility as a software engineer is to identify and fix 5 critical issues to ensure:
+✅ Smooth UI behavior
+✅ Correct ROI calculations
+✅ Stable sorting
+✅ Proper state handling
+✅ Production-level stability
+📌 Core Features
+✅ Add / Edit / Delete tasks
+✅ View task details (dialog)
+✅ ROI calculation (Revenue ÷ Time Taken)
+✅ Sort tasks by ROI + Priority
+✅ Search tasks quickly
+✅ Filter by Status & Priority
+✅ Summary insights dashboard:
+Total Revenue
+Efficiency
+Average ROI
+Performance Grade
+✅ CSV Import & Export
+✅ Undo Delete (Snackbar)
+✅ LocalStorage Persistence (No backend)
+🧠 How Priority & Sorting Works
+Tasks are ranked using the following logic:
+✅ Sorting Order
+Primary: ROI (High → Low)
+Secondary: Priority (High > Medium > Low)
+Tie-breaker: Deterministic stable logic
+Example:
+Alphabetical order of title ✅ OR
+ID / Created Time Desc ✅
+This prevents list flickering and unstable reorder issues.
+🐞 Fixed Bugs (All 5)
+✅ Bug 1 — Double Fetch on Page Load
+Problem: Data fetch was triggered twice on initial render.
+Cause: StrictMode + unstable useEffect dependencies.
+Fix: Ensured fetching runs only once and avoids duplicated initialization.
+✅ Result: Data loads exactly one time on refresh.
+✅ Bug 2 — Undo Snackbar State Not Resetting
+Problem: After snackbar closes, the app keeps lastDeletedTask in memory.
+This caused incorrect Undo restoration later.
+✅ Fix Implemented:
+Reset lastDeletedTask → null
+Reset isDeleted → false
+Done both on:
+Auto-close timeout
+Manual close
+✅ Result: Undo restores only the most recent deleted task (within the snackbar window).
+✅ Bug 3 — Unstable Sorting (ROI tie flickering)
+Problem: If multiple tasks had the same ROI + priority, list order randomly changed on re-render.
+✅ Fix Implemented:
+Added stable deterministic tie-breaker
+title alphabetical OR id comparison
+✅ Result: Task ordering stays consistent across re-renders and reloads.
+✅ Bug 4 — Double Dialog Opening (Event Bubbling)
+Problem: Clicking Edit/Delete triggered both:
+View Dialog (row click)
+Edit/Delete dialog (button click)
+✅ Fix Implemented:
+Added e.stopPropagation() on Edit/Delete button click handlers
+✅ Result:
+Clicking task row → opens only View
+Clicking Edit → opens only Edit
+Clicking Delete → opens only Delete
+✅ Bug 5 — ROI Validation Error (Infinity / NaN issues)
+Problem: ROI calculation broke when:
+TimeTaken = 0
+Inputs empty/invalid
+Revenue missing
+✅ Fix Implemented:
+Validation before calculation
+Safe fallback ROI (0 or “—”)
+Proper numeric formatting (2 decimals)
+✅ Result: No more Infinity, NaN, or broken UI values.
+🛠️ Tech Stack
+React 18+
+Tailwind CSS
+Lucide React Icons
+LocalStorage (persistent data storage)
+Vite (fast development bundler)
+📂 Folder Structure (Important Files)
+Copy code
 
-A modern, bug-free task management application designed for sales teams to track, manage, and prioritize tasks based on Return on Investment (ROI).
-
-![Task Manager](https://img.shields.io/badge/React-18.3-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![Tailwind](https://img.shields.io/badge/Tailwind-3.4-blue)
-
-## 🚀 Live Demo
-
-[View Live App](https://your-deployment-url.vercel.app)
-
-## ✨ Features
-
-- **Task CRUD Operations** - Create, read, update, and delete tasks
-- **ROI Calculation** - Automatic ROI calculation (Revenue ÷ Time Taken)
-- **Smart Sorting** - Tasks sorted by ROI → Priority → Title (stable sorting)
-- **Search & Filter** - Filter by status, priority, or search by keywords
-- **Summary Dashboard** - View total revenue, average ROI, efficiency metrics
-- **CSV Import/Export** - Bulk import and export tasks
-- **Undo Delete** - 5-second window to undo accidental deletions
-- **LocalStorage Persistence** - Data persists across browser sessions
-
-## 🐛 Bug Fixes Implemented
-
-### Bug #1: Double Fetch Issue
-**Problem:** Task retrieval function ran twice on page load due to React StrictMode and improper useEffect setup.
-
-**Solution:** Implemented a `useRef` flag (`hasInitialized`) to ensure data loading only happens once, regardless of StrictMode's double-invocation behavior.
-
-```typescript
-const hasInitialized = useRef(false);
-
-useEffect(() => {
-  if (hasInitialized.current) return;
-  hasInitialized.current = true;
-  // Load data...
-}, []);
-```
-
-### Bug #2: Undo Snackbar State Management
-**Problem:** Closing the snackbar didn't reset `lastDeletedTask` state, causing incorrect undo behavior.
-
-**Solution:** Implemented proper state cleanup in `dismissSnackbar` function that clears both `showUndoSnackbar` and `lastDeletedTask` states.
-
-```typescript
-const dismissSnackbar = useCallback(() => {
-  setShowUndoSnackbar(false);
-  setLastDeletedTask(null);
-}, []);
-```
-
-### Bug #3: Unstable Sorting (Flickering)
-**Problem:** Tasks with identical ROI and priority values caused random reordering on re-renders.
-
-**Solution:** Added a stable tie-breaker using alphabetical title comparison as the tertiary sort criterion.
-
-```typescript
-export function sortTasks(tasks: Task[]): Task[] {
-  return [...tasks].sort((a, b) => {
-    // Primary: ROI descending
-    if (a.roi !== b.roi) return b.roi - a.roi;
-    // Secondary: Priority descending
-    const priorityDiff = priorityWeight[b.priority] - priorityWeight[a.priority];
-    if (priorityDiff !== 0) return priorityDiff;
-    // Tertiary: Title alphabetically (stable)
-    return a.title.localeCompare(b.title);
-  });
-}
-```
-
-### Bug #4: Double Dialog Opening (Event Bubbling)
-**Problem:** Clicking Edit/Delete buttons also triggered the View dialog due to event propagation.
-
-**Solution:** Added `e.stopPropagation()` to Edit and Delete button handlers.
-
-```typescript
-const handleEditClick = (e: React.MouseEvent, task: Task) => {
-  e.stopPropagation();
-  setEditTask(task);
-};
-
-const handleDeleteClick = (e: React.MouseEvent, task: Task) => {
-  e.stopPropagation();
-  setDeleteTask(task);
-};
-```
-
-### Bug #5: ROI Calculation Errors
-**Problem:** Division by zero, invalid inputs, and NaN values broke the UI.
-
-**Solution:** Implemented safe ROI calculation with comprehensive validation.
-
-```typescript
-export function calculateROI(revenue: number | string, timeTaken: number | string): number {
-  const rev = typeof revenue === 'string' ? parseFloat(revenue) : revenue;
-  const time = typeof timeTaken === 'string' ? parseFloat(timeTaken) : timeTaken;
-
-  // Validate inputs
-  if (isNaN(rev) || isNaN(time) || time <= 0 || rev < 0) {
-    return 0;
-  }
-
-  return Math.round((rev / time) * 100) / 100;
-}
-```
-
-## 🛠️ Tech Stack
-
-- **Frontend Framework:** React 18.3 with TypeScript
-- **Build Tool:** Vite
-- **Styling:** Tailwind CSS + shadcn/ui components
-- **State Management:** React hooks (useState, useEffect, useCallback, useRef)
-- **Icons:** Lucide React
-- **Data Persistence:** LocalStorage
-
-## 📁 Project Structure
-
-```
-src/
-├── components/
-│   ├── ui/                    # shadcn/ui components
-│   ├── TaskHeader.tsx         # Header with import/export
-│   ├── TaskSummary.tsx        # Metrics dashboard
-│   ├── TaskFilters.tsx        # Search and filter controls
-│   ├── TaskList.tsx           # Task list with row actions
-│   ├── TaskForm.tsx           # Create/edit task dialog
-│   ├── TaskViewDialog.tsx     # View task details
-│   ├── DeleteConfirmDialog.tsx# Delete confirmation
-│   └── UndoSnackbar.tsx       # Undo delete notification
-├── hooks/
-│   └── useTasks.ts            # Task state management hook
-├── lib/
-│   ├── taskUtils.ts           # ROI calculation, sorting, filtering
-│   ├── csvUtils.ts            # CSV import/export utilities
-│   └── utils.ts               # General utilities
-├── types/
-│   └── task.ts                # TypeScript interfaces
-├── pages/
-│   └── Index.tsx              # Main application page
-└── index.css                  # Global styles & design tokens
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- npm or yarn
-
-### Installation
-
-```bash
-# Clone the repository
+task-glitch/
+│
+├── src/
+│   ├── components/        # UI components (dialogs, forms, cards)
+│   ├── utils/             # ROI calculation helpers, sorting logic
+│   ├── pages/             # Main views/screens
+│   ├── App.jsx            # Main app
+│   ├── main.jsx           # React entry point
+│
+├── public/
+├── package.json
+└── README.md
+⚙️ Setup & Run Locally
+✅ 1) Clone Repository
+Copy code
+Bash
 git clone https://github.com/your-username/task-glitch.git
-
-# Navigate to project directory
 cd task-glitch
-
-# Install dependencies
+✅ 2) Install Dependencies
+Copy code
+Bash
 npm install
-
-# Start development server
+✅ 3) Start Development Server
+Copy code
+Bash
 npm run dev
-```
+App runs on:
+Copy code
 
-### Build for Production
-
-```bash
+http://localhost:5173
+🌍 Deployment (Vercel / Netlify)
+✅ Deploy using Vercel
+Push code to GitHub
+Open Vercel → Import project
+Build Command:
+Copy code
+Bash
 npm run build
-```
-
-## 📊 Usage Guide
-
-### Creating a Task
-1. Click "Add Task" button in the header
-2. Fill in task details (title, revenue, time taken, etc.)
-3. ROI is automatically calculated as you type
-4. Click "Create Task" to save
-
-### Editing a Task
-1. Click the pencil icon on any task row
-2. Modify the task details
-3. Click "Save Changes"
-
-### Deleting a Task
-1. Click the trash icon on any task row
-2. Confirm deletion in the dialog
-3. Use "Undo" in the snackbar within 5 seconds to restore
-
-### Filtering Tasks
-- Use the search bar to find tasks by title, description, or notes
-- Filter by status (Pending, In Progress, Completed)
-- Filter by priority (High, Medium, Low)
-
-### Import/Export
-- **Export:** Click "Export" to download all tasks as CSV
-- **Import:** Click "Import" and select a CSV file
-
-## 📝 CSV Format
-
-```csv
-Title,Description,Revenue,Time Taken,ROI,Priority,Status,Notes,Created At,Updated At
-"Enterprise Deal","Q1 proposal",50000,10,5000,high,in-progress,"Decision pending",2024-01-15,2024-01-15
-```
-
-## 🎨 Design System
-
-The app uses a carefully crafted design system with:
-- **Primary:** Indigo for brand elements
-- **Success:** Green for positive metrics
-- **Warning:** Amber for attention items
-- **Destructive:** Red for errors and deletions
-- **Semantic tokens** for consistent theming
-
-## 📄 License
-
-MIT License - feel free to use this project for learning and development.
-
-## 👤 Author
-
-[Your Name](https://github.com/your-username)
-
----
-
-Built with ❤️ using React, TypeScript, and Tailwind CSS
+Output Directory:
+Copy code
+Bash
+dist
+✅ After deployment, confirm live app works in Incognito Mode.
+✅ Submission Checklist
+✅ GitHub repository link added
+✅ Live hosted link added (Vercel/Netlify)
+✅ Screen recording link added
+✅ All 5 bugs fixed
+✅ Clean commit history (not one big commit)
+✅ README updated properly
+📸 Screen Recording Requirements (2–3 mins)
+The video should show:
+✅ One bug fix in code
+✅ Updated result in UI
+✅ Proof that issue is solved
+Example: Click Edit → only edit dialog opens, no view dialog popup.
+📊 Evaluation Rubric
+Criteria
+Weight
+Bug Fixes
+50%
+Code Quality
+20%
+UX/UI Stability
+20%
+Deployment
+10%
+👨‍💻 Author
+Marikanta
+📧 Email: your-email@gmail.com
+🔗 GitHub: https://github.com/your-username
+🔗 LinkedIn: https://linkedin.com/in/your-profile
