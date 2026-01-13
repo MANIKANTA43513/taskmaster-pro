@@ -2,8 +2,8 @@
 A modern Task Management Web App built for Sales Teams to track, manage, and prioritize tasks based on ROI (Return on Investment).
 This project is part of an SDE Bug Fix Assignment where the goal is to convert a “glitchy” application into a stable, production-ready product by fixing UI bugs, logical errors, and performance issues.
 🚀 Live Demo
-✅ Live App URL: https://yourname-taskglitch.vercel.app
-✅ GitHub Repo URL: https://github.com/your-username/task-glitch
+✅ Live App URL: https://taskmaster-pro-nu.vercel.app/
+✅ GitHub Repo URL: 
 ✅ Screen Recording: https://drive.google.com/...
 ⚠️ Make sure the live link works in Incognito Mode before submitting.
 🎯 Project Objective
