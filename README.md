@@ -3,9 +3,8 @@ A modern Task Management Web App built for Sales Teams to track, manage, and pri
 This project is part of an SDE Bug Fix Assignment where the goal is to convert a “glitchy” application into a stable, production-ready product by fixing UI bugs, logical errors, and performance issues.
 🚀 Live Demo
 ✅ Live App URL: https://taskmaster-pro-nu.vercel.app/
-✅ GitHub Repo URL: 
-✅ Screen Recording: https://drive.google.com/...
-⚠️ Make sure the live link works in Incognito Mode before submitting.
+✅ GitHub Repo URL: https://github.com/MANIKANTA43513/taskmaster-pro.git
+✅ Screen Recording: https://drive.google.com/file/d/17T4uzUyH6-7DXMmiguOM1Kf5a4QmU3U_/view?usp=sharing
 🎯 Project Objective
 This app was intentionally designed with hidden bugs.
 My responsibility as a software engineer is to identify and fix 5 critical issues to ensure:
@@ -158,7 +157,4 @@ UX/UI Stability
 Deployment
 10%
 👨‍💻 Author
-Marikanta
-📧 Email: your-email@gmail.com
-🔗 GitHub: https://github.com/your-username
-🔗 LinkedIn: https://linkedin.com/in/your-profile
+Manikanta.
